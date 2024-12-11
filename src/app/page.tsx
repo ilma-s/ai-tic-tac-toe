@@ -228,7 +228,7 @@ const TicTacToe = () => {
         {!gameActive && !playerSymbol && (
           <div className="text-center mb-4">
             <h2 className="text-xl">Choose your symbol</h2>
-            <div>
+            <div className="mt-4">
               <button
                 className="px-6 py-3 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition"
                 onClick={() => startNewGame("X")}
