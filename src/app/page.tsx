@@ -93,23 +93,66 @@ const TicTacToe = () => {
   };
 
   const findBestMove = (): number => {
-    const newBoard: string[] = [...board];
+    const newBoard: string[] = [...board]; // Ensure newBoard is a string array
     let bestScore = -Infinity;
     let bestMove = -1;
 
+    // Step 1: Check if AI can win immediately
+    const win = winningMove(board); // Check for winning move for AI ('X')
+    if (win !== null) {
+      return win; // AI makes the winning move
+    }
+
+    // Step 2: Check if AI needs to block
+    const block = blockMove(board); // Check if the player ('O') is about to win
+    if (block !== null) {
+      return block; // Block the player's winning move
+    }
+
+    // Step 3: If no block or winning move is needed, calculate the best move using minimax
     for (let i = 0; i < newBoard.length; i++) {
       if (newBoard[i] === " ") {
-        newBoard[i] = aiSymbol;
-        const moveScore = minimax(newBoard, 0, false, -Infinity, Infinity);
+        newBoard[i] = aiSymbol; // AI plays 'X' or 'O'
+        const moveScore = minimax(newBoard, 0, false, -Infinity, Infinity); // Pass all 5 arguments
         if (moveScore > bestScore) {
           bestScore = moveScore;
           bestMove = i;
         }
-        newBoard[i] = " ";
+        newBoard[i] = " "; // Undo the move
       }
     }
 
     return bestMove;
+  };
+
+  // Function to check if there's a winning move for the AI
+  const winningMove = (board: string[]): number | null => {
+    for (let i = 0; i < board.length; i++) {
+      if (board[i] === " ") {
+        board[i] = aiSymbol; // Try the AI's symbol
+        if (checkWinner(board) === aiSymbol) {
+          board[i] = " "; // Undo the move
+          return i;
+        }
+        board[i] = " "; // Undo the move
+      }
+    }
+    return null;
+  };
+
+  // Function to check if there's a move that blocks the player from winning
+  const blockMove = (board: string[]): number | null => {
+    for (let i = 0; i < board.length; i++) {
+      if (board[i] === " ") {
+        board[i] = playerSymbol!; // Try the player's symbol
+        if (checkWinner(board) === playerSymbol) {
+          board[i] = " "; // Undo the move
+          return i;
+        }
+        board[i] = " "; // Undo the move
+      }
+    }
+    return null;
   };
 
   const handlePlayerMove = (index: number) => {
